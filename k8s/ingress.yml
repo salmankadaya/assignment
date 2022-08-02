@@ -1,0 +1,34 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/canary: "true"
+    nginx.ingress.kubernetes.io/canary-weight: "75"
+  name: blue-app-ing
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: canary.example.com
+      http:
+        paths:
+          - backend:
+              serviceName: blue-app-svc
+              servicePort: 8080
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/canary-weight: "25"
+  name: green-app-ing
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: canary.example.com
+      http:
+        paths:
+          - backend:
+              serviceName: green-app-svc
+              servicePort: 8081
